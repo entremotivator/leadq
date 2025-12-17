@@ -20,10 +20,19 @@ st.markdown("""
     .main {
         padding: 0rem 1rem;
     }
-    .stMetric {
-        background-color: #f0f2f6;
-        padding: 15px;
-        border-radius: 10px;
+    div[data-testid="stMetricValue"] {
+        font-size: 32px;
+        color: #1f2937;
+        font-weight: 700;
+    }
+    div[data-testid="stMetricLabel"] {
+        color: #1f2937;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    div[data-testid="stMetricDelta"] {
+        color: #1f2937;
+        font-weight: 500;
     }
     .metric-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -145,39 +154,55 @@ filtered_df = filtered_df[
 st.title("🏠 Real Estate Lead Qualifier Dashboard")
 st.markdown("### Intelligent Lead Scoring & Analytics")
 
-# Key Metrics
+# Key Metrics with colorful cards
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric(
-        "Total Leads",
-        len(filtered_df),
-        delta=f"{len(filtered_df) - len(df)} from total"
-    )
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
+            <p style='color: #ffffff; font-size: 14px; margin: 0; font-weight: 600;'>📊 TOTAL LEADS</p>
+            <h2 style='color: #ffffff; margin: 10px 0; font-size: 36px; font-weight: 700;'>{}</h2>
+            <p style='color: #ffffff; font-size: 13px; margin: 0;'>{} from total</p>
+        </div>
+    """.format(len(filtered_df), f"+{len(filtered_df) - len(df)}" if len(filtered_df) - len(df) >= 0 else f"{len(filtered_df) - len(df)}"), 
+    unsafe_allow_html=True)
 
 with col2:
     qualified_count = len(filtered_df[filtered_df['Qualified'] == 'Yes'])
-    st.metric(
-        "Qualified Leads",
-        qualified_count,
-        delta=f"{round(qualified_count/len(filtered_df)*100, 1)}%"
-    )
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+                    padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
+            <p style='color: #ffffff; font-size: 14px; margin: 0; font-weight: 600;'>✅ QUALIFIED LEADS</p>
+            <h2 style='color: #ffffff; margin: 10px 0; font-size: 36px; font-weight: 700;'>{}</h2>
+            <p style='color: #ffffff; font-size: 13px; margin: 0;'>{}% qualification rate</p>
+        </div>
+    """.format(qualified_count, round(qualified_count/len(filtered_df)*100, 1) if len(filtered_df) > 0 else 0), 
+    unsafe_allow_html=True)
 
 with col3:
     avg_score = filtered_df['Score'].mean()
-    st.metric(
-        "Average Score",
-        f"{avg_score:.1f}",
-        delta=f"{avg_score - df['Score'].mean():.1f}"
-    )
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                    padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
+            <p style='color: #ffffff; font-size: 14px; margin: 0; font-weight: 600;'>🎯 AVERAGE SCORE</p>
+            <h2 style='color: #ffffff; margin: 10px 0; font-size: 36px; font-weight: 700;'>{:.1f}</h2>
+            <p style='color: #ffffff; font-size: 13px; margin: 0;'>{:+.1f} from overall</p>
+        </div>
+    """.format(avg_score, avg_score - df['Score'].mean()), 
+    unsafe_allow_html=True)
 
 with col4:
     avg_budget = filtered_df['Budget_Min'].mean()
-    st.metric(
-        "Avg Budget",
-        f"${avg_budget:,.0f}",
-        delta=f"${avg_budget - df['Budget_Min'].mean():,.0f}"
-    )
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+                    padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
+            <p style='color: #ffffff; font-size: 14px; margin: 0; font-weight: 600;'>💰 AVG BUDGET</p>
+            <h2 style='color: #ffffff; margin: 10px 0; font-size: 36px; font-weight: 700;'>${:,.0f}</h2>
+            <p style='color: #ffffff; font-size: 13px; margin: 0;'>${:+,.0f} from overall</p>
+        </div>
+    """.format(avg_budget, avg_budget - df['Budget_Min'].mean()), 
+    unsafe_allow_html=True)
 
 st.markdown("---")
 
